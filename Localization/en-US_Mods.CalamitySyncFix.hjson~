@@ -1,0 +1,191 @@
+Mods: {
+	CalamitySyncFix: {
+		Configs: {
+			CalamitySyncFixConfig: {
+				SyncPlayerDash: {
+					Label: Player dash hotkey synchronization
+					Tooltip: "When enabled, syncs player's position when using the dash hotkey added by Calamity Mod.\n(This may result in sending additional network packets.)"
+				}
+
+				DisplayName: Calamity Sync Fix Config
+				Headers.Weapons: Weapons Header
+
+				Weapons: {
+					Label: Weapons
+					Tooltip: ""
+				}
+			}
+
+			MeleeSyncConfig: {
+				ArkoftheAncientsSwungBlade: {
+					Label: Fractured Ark - Default Swing Animations
+					Tooltip:
+						'''
+						When enabled, fixes the default swing animation of the Fractured Ark.
+						This setting has no network impact.
+						'''
+				}
+
+				ArkoftheAncientsParryHoldout: {
+					Label: Fractured Ark - Parry Animation
+					Tooltip:
+						'''
+						When enabled, fixes the parry animation of the Fractured Ark.
+						This setting has no network impact.
+						'''
+				}
+
+				TrueArkoftheAncientsSwungBlade: {
+					Label: Ark of the Ancients - Default Swing Animations
+					Tooltip:
+						'''
+						When enabled, fixes the default swing animation of the Ark of the Ancients.
+						This setting has no network impact.
+						'''
+				}
+
+				TrueArkoftheAncientsParryHoldout: {
+					Label: Ark of the Ancients - Parry Animation
+					Tooltip:
+						'''
+						When enabled, fixes the parry animation of the Ark of the Ancients.
+						This setting has no network impact.
+						'''
+				}
+
+				ArkoftheElementsSwungBlade: {
+					Label: Ark of the Elements - Default Swing Animations
+					Tooltip:
+						'''
+						When enabled, fixes the default swing animation of the Ark of the Elements.
+						This setting has no network impact.
+						'''
+				}
+
+				ArkoftheElementsParryHoldout: {
+					Label: Ark of the Elements - Parry Animation
+					Tooltip:
+						'''
+						When enabled, fixes the parry animation of the Ark of the Elements.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				ArkoftheCosmosSwungBlade: {
+					Label: Ark of the Cosmos - Default Swing Animations
+					Tooltip:
+						'''
+						When enabled, fixes the default swing animation of the Ark of the Cosmos.
+						This setting has no network impact.
+						'''
+				}
+
+				ArkoftheCosmosParryHoldout: {
+					Label: Ark of the Cosmos - Parry Animation
+					Tooltip:
+						'''
+						When enabled, fixes the parry animation of the Ark of the Cosmos.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				ArkoftheCosmosBlast: {
+					Label: Ark of the Cosmos - Blast Animations
+					Tooltip:
+						'''
+						When enabled, fixes the blast animation of the Ark of the Cosmos.
+						This setting has no network impact.
+						'''
+				}
+
+				GalaxySmasherHammer: {
+					Label: [i:CalamityMod/Items/Weapons/Melee/GalaxySmasher] Galaxy Smasher Projectile
+					Tooltip:
+						'''
+						When enabled, Galaxy Smasher projectiles will be network synchronized.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				GalaxySmasherHammerTickDelay: {
+					Label: Galaxy Smasher Tick Delay
+					Tooltip: 
+						'''
+						Determines the network synchronization tick rate for Galaxy Smasher projectiles.
+						If the value is greater than 0, it waits for that many ticks between synchronizations. (60 ticks = 1 second).
+						Higher values have less impact on the server.
+						'''
+				}
+
+				StellarContemptHammer: {
+					Label: Stellar Contempt
+					Tooltip: 
+						'''
+						When enabled, Stellar Contempt projectiles will be network synchronized.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				StellarContemptHammerTickDelay: {
+					Label: Stellar Contempt Hammer Tick Delay
+					Tooltip:
+						'''
+						Determines the network synchronization tick rate for Stellar Contempt projectiles.
+						If the value is greater than 0, it waits for that many ticks between synchronizations. (60 ticks = 1 second).
+						Higher values have less impact on the server.
+						'''
+				}
+
+				FallenPaladinsHammerProj: {
+					Label: Fallen Paladin's Hammer
+					Tooltip:
+						'''
+						When enabled, Fallen Paladin's Hammer projectiles will be network synchronized.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				FallenPaladinsHammerProjTickDelay: {
+					Label: Fallen Paladin's Hammer Tick Delay
+					Tooltip:
+						'''
+						Determines the network synchronization tick rate for Fallen Paladin's Hammer projectiles.
+						If the value is greater than 0, it waits for that many ticks between synchronizations.
+						(60 ticks = 1 second). Higher values have less impact on the server.
+						'''
+				}
+
+				PwnagehammerProj: {
+					Label: Pwnagehammer
+					Tooltip:
+						'''
+						When enabled, Pwnagehammer projectiles will be network synchronized.
+						(This may result in sending additional network packets.)
+						'''
+				}
+
+				PwnagehammerProjTickDelay: {
+					Label: Pwnagehammer Tick Delay
+					Tooltip:
+						'''
+						Determines the network synchronization tick rate for Pwnagehammer projectiles.
+						If the value is greater than 0, it waits for that many ticks between synchronizations. (60 ticks = 1 second).
+						Higher values have less impact on the server.
+						'''
+				}
+
+				Tooltip: ""
+			}
+
+			WeaponsConfig: {
+				Tooltip: ""
+				Headers.Melee: Melee
+
+				Melee: {
+					Label: Melee
+					Tooltip: ""
+				}
+			}
+		}
+	}
+}

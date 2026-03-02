@@ -1,0 +1,12 @@
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.csproj.AssemblyReference.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.AssemblyInfoInputs.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.AssemblyInfo.cs
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.csproj.CoreCompileInputs.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\bin\Debug\net8.0\CalamitySyncFix.deps.json
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\bin\Debug\net8.0\CalamitySyncFix.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\bin\Debug\net8.0\CalamitySyncFix.pdb
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\refint\CalamitySyncFix.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\CalamitySyncFix.pdb
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamitySyncFix\obj\Debug\net8.0\ref\CalamitySyncFix.dll

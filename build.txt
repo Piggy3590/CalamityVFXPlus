@@ -1,0 +1,5 @@
+name = CalamiFXPlus
+displayName = CalamiFX+
+author = Piggy
+version = 0.0.1
+modReferences = CalamityMod, VFXPlus

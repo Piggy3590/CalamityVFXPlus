@@ -1,0 +1,3 @@
+CalamiFX+ is a mod that applies VFX+-style effects to weapons in Calamity.
+While the effects have been tweaked, the base is entirely based on the work of Linty (@linty9075), who developed VFX+. Thanks for the awesome mod!
+This mod shouldn't affect weapon behavior, but it's not a perfect implementation, so there may be slight differences.

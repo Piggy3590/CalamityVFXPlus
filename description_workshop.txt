@@ -1,0 +1,24 @@
+CalamiFX+ is a mod that applies [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=3628420060&searchtext=vfx%2B]VFX+[/url][/b] style effects to weapons in [b][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2824688072&searchtext=calamity+mod]Calamity Mod[/url][/b].
+
+While some shaders have been modified, the foundation is entirely based on the work of [b]Linty (@linty9075)[/b], who developed [b]VFX+[/b]. Thank you for the awesome mod!
+
+This mod shouldn't affect weapon behavior, but it's not a perfect implementation, so there may be slight differences.
+
+[h3]Tested only on Calamity 2.1.1![/h3]
+
+==============
+
+[List]
+Currently Applies to:
+    [*]Prism-type weapons (Dark Spark, Yharim's Crystal)
+[/List]
+
+[List]
+Planned:
+    [*](I haven't thought of anything to implement yet cuz I'm melee only. sry please recommend weapons in the comments)
+[/List]
+
+===============
+
+Credit: Linty (@linty9075) - Developer of VFX+.
+Source: https://github.com/Piggy3590/CalamityVFXPlus

@@ -1,0 +1,15 @@
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\bin\Debug\net8.0\CalamityVFXPlus.deps.json
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\bin\Debug\net8.0\CalamityVFXPlus.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\bin\Debug\net8.0\CalamityVFXPlus.pdb
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\bin\Debug\net8.0\CalamityMod_v2.1.1.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\bin\Debug\net8.0\VFXPlus_v1.0.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.csproj.AssemblyReference.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.AssemblyInfoInputs.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.AssemblyInfo.cs
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.csproj.CoreCompileInputs.cache
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.csproj.CopyComplete
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\refint\CalamityVFXPlus.dll
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\CalamityVFXPlus.pdb
+C:\Users\pc\Documents\My Games\Terraria\tModLoader\ModSources\CalamityVFXPlus\obj\Debug\net8.0\ref\CalamityVFXPlus.dll
