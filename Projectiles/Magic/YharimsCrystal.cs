@@ -245,8 +245,6 @@ public class YharimsCrystalOverride : GlobalProjectile
     private float GetPrismBeamLength(Projectile prism)
     {
         Vector2 dir = prism.velocity.SafeNormalize(-Vector2.UnitY);
-
-        // 샘플링 시작점: 보통 prism.Center. 벽에 박혔을 때 보정하려면 player.Center도 고려
         Vector2 samplingPoint = prism.Center;
         Player p = Main.player[prism.owner];
         if (!Collision.CanHitLine(p.Center, 0, 0, prism.Center, 0, 0))
@@ -793,4 +791,5 @@ public class YharimsCrystalOverride : GlobalProjectile
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
             #endregion
         }
+
     }
