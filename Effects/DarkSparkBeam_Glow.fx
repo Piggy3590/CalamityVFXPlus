@@ -1,7 +1,3 @@
-// ===============================
-// DarkSparkBeam_Glow.fx (Additive)
-// ===============================
-
 sampler uImage0 : register(s0);
 matrix WorldViewProjection;
 
@@ -27,7 +23,6 @@ float satPower;
 float3 baseColor;
 
 float uTime;
-
 float baseColorMult;
 float powMult;
 float glowFade;
@@ -158,5 +153,4 @@ technique BasicColorDrawing
     {
         PixelShader = compile ps_2_0 DarkSparkGlow();
     }
-
 };

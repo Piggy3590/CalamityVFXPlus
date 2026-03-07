@@ -156,5 +156,4 @@ technique BasicColorDrawing
     {
         PixelShader = compile ps_2_0 DarkSparkCore();
     }
-
 };

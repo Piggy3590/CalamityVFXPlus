@@ -1,9 +1,3 @@
-// ===============================
-// DarkSparkBeam_Glow.fx (Additive)
-// - glowFade로 360~720 서서히 ON
-// - powMult/baseColorMult로 강도 조절
-// ===============================
-
 sampler uImage0 : register(s0);
 matrix WorldViewProjection;
 
@@ -29,8 +23,6 @@ float satPower;
 float3 baseColor;
 
 float uTime;
-
-// ✅ 추가
 float baseColorMult;
 float powMult;
 float glowFade;

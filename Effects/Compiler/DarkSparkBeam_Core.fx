@@ -23,11 +23,7 @@ float satPower;
 float3 baseColor;
 
 float uTime;
-
-// ✅ 추가: baseColor 강도(기존 0.3f 대체)
 float baseColorMult;
-
-// ✅ 추가: pow(발광) 항 제어
 float powMult;
 
 // Textures
@@ -140,10 +136,8 @@ float4 DarkSparkCore(VertexShaderOutput input) : COLOR0
 
     float4 sumTex = (col1 + col2 + col3 + col4);
 
-    // ✅ baseColorMult 사용(기존 0.3f 제거)
     float4 combined1 = length(sumTex) * float4(input_color.rgb * baseColorMult, satPower) * input_color.a;
 
-    // ✅ powMult로 pow 항 제어 (Core에서 0 주면 검정 시작 가능)
     float4 combined2 = (combined1 * totalMult) + (pow(sumTex, float4(2, 2, 2, 2)) * powMult);
 
     float input_alpha = input.Color.a;

@@ -253,8 +253,6 @@ public class DarkSparkOverride : GlobalProjectile
     private float GetPrismBeamLength(Projectile prism)
     {
         Vector2 dir = prism.velocity.SafeNormalize(-Vector2.UnitY);
-
-        // Sampling start point: Usually prism.Center. Also consider player.Center to compensate for when stuck in a wall
         Vector2 samplingPoint = prism.Center;
         Player p = Main.player[prism.owner];
         if (!Collision.CanHitLine(p.Center, 0, 0, prism.Center, 0, 0))
@@ -364,8 +362,6 @@ public class DarkSparkOverride : GlobalProjectile
             // init
             if (timer == 0)
                 lpci = new LastPrismColorInfo(0.66f, 0.66f, 1.03f, 0.77f);
-
-            // original DarkSparkBeam AI
             Vector2? chargeUpCenter = null;
 
             if (projectile.velocity.HasNaNs() || projectile.velocity == Vector2.Zero)
@@ -382,10 +378,10 @@ public class DarkSparkOverride : GlobalProjectile
 
             Projectile parent = Main.projectile[parentIndex];
 
-            float laserPosition = (int)projectile.ai[0] - 2.5f; // Slot-based positioning (same as original):contentReference[oaicite:6]{index=6}
+            float laserPosition = (int)projectile.ai[0] - 2.5f;
             Vector2 aimDirection = Vector2.Normalize(parent.velocity);
 
-            // Original parameters: contentReference[oaicite:7]{index=7}
+            // contentReference[oaicite:7]{index=7}
             float laserTimer;
             float yOffset;
             float laserRotationSpeed;
@@ -410,34 +406,34 @@ public class DarkSparkOverride : GlobalProjectile
                 forwardOffset = -7f;
             }
 
-            // Orbital phase: contentReference[oaicite:8]{index=8}
+            // contentReference[oaicite:8]{index=8}
             float phase = (parent.ai[0] + laserPosition * laserRotationSpeed) / (laserRotationSpeed * 6f) * MathHelper.TwoPi;
 
-            // Axial wobble: contentReference[oaicite:9]{index=9}
+            // contentReference[oaicite:9]{index=9}
             float rotOffset = Vector2.UnitY.RotatedBy(phase).Y * (MathHelper.Pi / 6f) * laserTimer * 0.33f;
 
-            // Radius Offset: contentReference[oaicite:10]{index=10}
+            // contentReference[oaicite:10]{index=10}
             Vector2 radialOffset =
                 (Vector2.UnitY.RotatedBy(phase) * new Vector2(4f, yOffset)).RotatedBy(parent.velocity.ToRotation());
 
-            // Location: contentReference[oaicite:11]{index=11}
+            // 위치(원본) :contentReference[oaicite:11]{index=11}
             projectile.position = parent.Center + aimDirection * 16f - projectile.Size / 2f
                                 + new Vector2(0f, -parent.gfxOffY);
             projectile.position += parent.velocity.ToRotation().ToRotationVector2() * forwardOffset;
             projectile.position += radialOffset;
 
-            // Direction: contentReference[oaicite:12]{index=12}
+            // 방향(원본) :contentReference[oaicite:12]{index=12}
             projectile.velocity = Vector2.Normalize(parent.velocity).RotatedBy(rotOffset);
 
-            // Width/Scale: Reduced from 2.25 to 1.5 and fixed :contentReference[oaicite:13]{index=13}
+            // ✅ 두께/스케일(원본): 2.25 -> 1.5로 감소 후 고정 :contentReference[oaicite:13]{index=13}
             projectile.scale = 1.5f * (1.5f - laserTimer);
 
-            // Damage: 0.25x -> 2.2x :contentReference[oaicite:14]{index=14}
+            // ✅ 데미지(원본): 0.25x -> 2.2x :contentReference[oaicite:14]{index=14}
             float dmgT = parent.ai[0] / 600f;
             if (dmgT > 1f) dmgT = 1f;
             projectile.damage = (int)(parent.damage * MathHelper.Lerp(0.25f, 2.2f, dmgT));
 
-            // Scan center after charging: contentReference[oaicite:15]{index=15}
+            // 충전 이후 스캔 중심(원본) :contentReference[oaicite:15]{index=15}
             if (parent.ai[0] >= 360f)
                 chargeUpCenter = parent.Center;
 
@@ -447,21 +443,24 @@ public class DarkSparkOverride : GlobalProjectile
             if (projectile.velocity.HasNaNs() || projectile.velocity == Vector2.Zero)
                 projectile.velocity = -Vector2.UnitY;
 
-            // Rotation/Normalization: contentReference[oaicite:16]{index=16}
+            // 회전/정규화(원본) :contentReference[oaicite:16]{index=16}
             float laserRot = projectile.velocity.ToRotation();
             projectile.rotation = laserRot - MathHelper.PiOver2;
             projectile.velocity = laserRot.ToRotationVector2();
 
-            // Length Scan: contentReference[oaicite:17]{index=17}
+            // 길이 스캔(원본) :contentReference[oaicite:17]{index=17}
             Vector2 samplingPoint = chargeUpCenter ?? projectile.Center;
             float[] samples = new float[2];
             Collision.LaserScan(samplingPoint, projectile.velocity, 0f * projectile.scale, 2400f, samples);
 
             float beamLen = (samples[0] + samples[1]) * 0.5f;
-            projectile.localAI[1] = MathHelper.Lerp(projectile.localAI[1], beamLen, 0.75f); // original- 0.75 :contentReference[oaicite:18]{index=18}
+            projectile.localAI[1] = MathHelper.Lerp(projectile.localAI[1], beamLen, 0.75f); // 원본 0.75 :contentReference[oaicite:18]{index=18}
+
+            // ❗ 원본은 friendly 토글 안 함. 네 코드의 parent.ai[0] > 30f 같은거 제거.
+            // projectile.friendly = true; // defaults가 true면 굳이 안 넣어도 됨.
 
             timer++;
-            return false;
+            return false; // 원본 AI 실행 방지(우리가 다 처리)
         }
 
         public override bool PreDraw(Projectile projectile, ref Color lightColor)
@@ -496,15 +495,12 @@ public class DarkSparkOverride : GlobalProjectile
 
         private static Color GetBeamBaseColor(float chargeTicks, int beamSlot)
         {
-            if (chargeTicks < 360f)
-                return Color.Black;
-
-            Color grayColor = new Color(0.6f, 0.6f, 0.6f, 1);
+            Color grayColor = new Color(0.55f, 0.55f, 0.55f, 1);
             Color col = Color.Yellow;
             // 360 ~ 720 : 검정 → 흰색
-            if (chargeTicks < 720f)
+            if (chargeTicks < 360)
             {
-                float t = MathHelper.Clamp((chargeTicks - 360f) / 360f, 0f, 1f);
+                float t = MathHelper.Clamp(chargeTicks / 360f, 0f, 1f);
                 return Color.Lerp(Color.Black, grayColor, t);
             }
 
@@ -514,9 +510,9 @@ public class DarkSparkOverride : GlobalProjectile
             col.A = (byte)0.4f;
 
             // 720 ~ 960 : 흰색 → 무지개 슬롯 색
-            if (chargeTicks < 960f)
+            if (chargeTicks < 600)
             {
-                float t = MathHelper.Clamp((chargeTicks - 720f) / 240f, 0f, 1f);
+                float t = MathHelper.Clamp((chargeTicks - 360) / 240f, 0f, 1f);
                 return Color.Lerp(grayColor, col, t);
             }
 
@@ -635,7 +631,7 @@ public class DarkSparkOverride : GlobalProjectile
             // PASS 1: CORE (AlphaBlend)
             // -------------------------
             // preCharge(0~360): 완전 검정 시작
-            Color coreBase = preCharge ? Color.Black : beamColor;
+            Color coreBase = beamColor;
 
             ApplyCommonParams(_coreFx, coreBase, multScale: 0.85f, sat: 1.0f);
 
@@ -713,5 +709,4 @@ public class DarkSparkOverride : GlobalProjectile
             Main.spriteBatch.Draw(star2,   drawPos, null, Color.Gray, rot * 0.2f, star2.Size() / 2f, endScale * 0.7f, 0, 1f);
         }
     }
-
 }

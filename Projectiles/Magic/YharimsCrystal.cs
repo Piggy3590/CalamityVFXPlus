@@ -245,6 +245,7 @@ public class YharimsCrystalOverride : GlobalProjectile
     private float GetPrismBeamLength(Projectile prism)
     {
         Vector2 dir = prism.velocity.SafeNormalize(-Vector2.UnitY);
+        
         Vector2 samplingPoint = prism.Center;
         Player p = Main.player[prism.owner];
         if (!Collision.CanHitLine(p.Center, 0, 0, prism.Center, 0, 0))
@@ -791,5 +792,4 @@ public class YharimsCrystalOverride : GlobalProjectile
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
             #endregion
         }
-
     }

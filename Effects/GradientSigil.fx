@@ -1,8 +1,5 @@
 texture uImage0;
-
 texture GradTex;
-
-// 샘플러
 sampler2D uImage0Sampler = sampler_state
 {
     Texture = <uImage0>;
@@ -46,6 +43,8 @@ float4 RotateSigilPixel(float2 uv : TEXCOORD0) : COLOR0
 
     float4 grad = tex2D(GradSampler, float2(t, 0.5));
 
+    // return float4(grad.rgb, 1);
+
     float outA = base.a * fadeA;
     float3 outRGB = grad.rgb * intensity;
 
@@ -58,5 +57,4 @@ technique Technique1
     {
         PixelShader = compile ps_3_0 RotateSigilPixel();
     }
-
 }

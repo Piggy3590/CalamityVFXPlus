@@ -4,21 +4,34 @@ While some shaders have been modified, the foundation is entirely based on the w
 
 This mod shouldn't affect weapon behavior, but it's not a perfect implementation, so there may be slight differences.
 
-[h3]Tested only on Calamity 2.1.1![/h3]
+[h3]Tested only on Calamity 2.1, Multiplayer has not been tested! (It should work though) [/h3]
 
 ==============
 
-[List]
+[h3]BEFORE[/h3]
+[img]https://raw.githubusercontent.com/Piggy3590/CalamitySyncFix/refs/heads/main/YharimBefore.gif[/img]
+
+[h3]AFTER[/h3]
+[img]https://raw.githubusercontent.com/Piggy3590/CalamitySyncFix/refs/heads/main/YharimAfter.gif[/img]
+
+==============
+
 Currently Applies to:
+[List]
     [*]Prism-type weapons (Dark Spark, Yharim's Crystal)
+    [*]Phantasmal Fury
+    [*]Vivid Clarity
+    [*]Magnetic Meltdown
 [/List]
 
-[List]
 Planned:
+[List]
     [*](I haven't thought of anything to implement yet cuz I'm melee only. sry please recommend weapons in the comments)
+    [*] Configuration
 [/List]
 
 ===============
 
 Credit: Linty (@linty9075) - Developer of VFX+.
-Source: https://github.com/Piggy3590/CalamityVFXPlus
+[url=https://github.com/Piggy3590/CalamityVFXPlus]Source[/url]
+Bug report: [url=https://docs.google.com/forms/d/e/1FAIpQLSeVGon1VdxkmJCEMzA-VXmlgUppui3jV2IKMLfRV-g0OpUIkg/viewform?usp=header]Forms[/url]
