@@ -10,68 +10,76 @@ using VFXPlus.Common.Drawing;
 namespace CalamityVFXPlus.Core.Systems;
 
 /// <summary>
-/// Hardens CalamiFX+ draw actions that are deferred through VFX+'s PixelationSystem.
+/// Hardens CalamiFX+ draw actions deferred through VFX+'s pixelation systems.
 ///
-/// A failed deferred draw must not escape into PixelationTarget.DrawPixelTarget: VFX+ only
-/// clears its action list and restores the SpriteBatch after all queued actions complete.
-/// If one beam throws in the middle, the remaining queue and graphics state can otherwise be
-/// left dirty for the rest of the frame (or longer).
+/// VFX+'s PixelationTarget.DrawPixelTarget clears its queued actions and restores the
+/// SpriteBatch only after every action has run. If one beam throws in the middle, the whole
+/// render-target pass can be left dirty. CalamiFX+ actions are therefore wrapped so one bad
+/// draw cannot escape into VFX+'s queue.
 ///
-/// This system also disables VFX+'s legacy screen-flash state when that implementation exists.
-/// That renderer hooks FilterManager.EndCapture and has historically been a source of unstable
-/// render-target state, especially when other full-screen filters are active.
+/// The wrapper also rejects stale Projectile references captured by deferred lambdas and
+/// disables VFX+'s legacy screen-flash state when that implementation exists.
 /// </summary>
 public sealed class RenderSafetySystem : ModSystem
 {
     private const int MaxCalamiFxActionsPerLayer = 128;
 
-    private Hook _queueLayerHook;
-    private Hook _queueStringHook;
+    private Hook _pixelQueueLayerHook;
+    private Hook _pixelQueueStringHook;
+    private Hook _additiveQueueLayerHook;
+    private Hook _additiveQueueStringHook;
 
     private static FieldInfo _legacyFlashActiveField;
     private static FieldInfo _legacyFlashTimeField;
     private static bool _legacyFlashReflectionResolved;
 
     private static readonly HashSet<string> LoggedFailures = new();
-    private static readonly HashSet<RenderLayer> LoggedBudgetDrops = new();
+    private static readonly HashSet<string> LoggedBudgetDrops = new();
 
-    private delegate void QueueLayerOrig(PixelationSystem self, RenderLayer renderType, Action renderAction, int order);
-    private delegate void QueueStringOrig(PixelationSystem self, string id, Action renderAction, int order);
+    private delegate void PixelQueueLayerOrig(PixelationSystem self, RenderLayer renderType, Action renderAction, int order);
+    private delegate void PixelQueueStringOrig(PixelationSystem self, string id, Action renderAction, int order);
+    private delegate void AdditiveQueueLayerOrig(AdditivePixelationSystem self, RenderLayer renderType, Action renderAction, int order);
+    private delegate void AdditiveQueueStringOrig(AdditivePixelationSystem self, string id, Action renderAction, int order);
 
     public override void Load()
     {
         if (Main.dedServ)
             return;
 
-        MethodInfo queueLayer = typeof(PixelationSystem).GetMethod(
-            nameof(PixelationSystem.QueueRenderAction),
-            BindingFlags.Public | BindingFlags.Instance,
-            binder: null,
-            types: new[] { typeof(RenderLayer), typeof(Action), typeof(int) },
-            modifiers: null);
+        _pixelQueueLayerHook = HookQueueMethod(
+            typeof(PixelationSystem),
+            new[] { typeof(RenderLayer), typeof(Action), typeof(int) },
+            (PixelQueueLayerOrig)PixelQueueLayerImpl);
 
-        MethodInfo queueString = typeof(PixelationSystem).GetMethod(
-            nameof(PixelationSystem.QueueRenderAction),
-            BindingFlags.Public | BindingFlags.Instance,
-            binder: null,
-            types: new[] { typeof(string), typeof(Action), typeof(int) },
-            modifiers: null);
+        _pixelQueueStringHook = HookQueueMethod(
+            typeof(PixelationSystem),
+            new[] { typeof(string), typeof(Action), typeof(int) },
+            (PixelQueueStringOrig)PixelQueueStringImpl);
 
-        if (queueLayer != null)
-            _queueLayerHook = new Hook(queueLayer, QueueLayerImpl);
+        _additiveQueueLayerHook = HookQueueMethod(
+            typeof(AdditivePixelationSystem),
+            new[] { typeof(RenderLayer), typeof(Action), typeof(int) },
+            (AdditiveQueueLayerOrig)AdditiveQueueLayerImpl);
 
-        if (queueString != null)
-            _queueStringHook = new Hook(queueString, QueueStringImpl);
+        _additiveQueueStringHook = HookQueueMethod(
+            typeof(AdditivePixelationSystem),
+            new[] { typeof(string), typeof(Action), typeof(int) },
+            (AdditiveQueueStringOrig)AdditiveQueueStringImpl);
 
         ResolveLegacyFlashFields();
     }
 
     public override void Unload()
     {
-        _queueLayerHook?.Dispose();
-        _queueStringHook?.Dispose();
-        _queueLayerHook = null;
-        _queueStringHook = null;
+        _pixelQueueLayerHook?.Dispose();
+        _pixelQueueStringHook?.Dispose();
+        _additiveQueueLayerHook?.Dispose();
+        _additiveQueueStringHook?.Dispose();
+
+        _pixelQueueLayerHook = null;
+        _pixelQueueStringHook = null;
+        _additiveQueueLayerHook = null;
+        _additiveQueueStringHook = null;
 
         _legacyFlashActiveField = null;
         _legacyFlashTimeField = null;
@@ -90,74 +98,111 @@ public sealed class RenderSafetySystem : ModSystem
     public override void PostUpdateEverything()
     {
         // Older VFX+ builds expose FlashSystem and hook FilterManager.EndCapture. CalamiFX+
-        // used SetCAFlashEffect on several beam weapons. Keep that legacy state disabled;
-        // the visual flash is non-essential and should never be able to poison the screen target.
+        // calls SetCAFlashEffect from beam weapons. Keep that legacy state disabled; the flash
+        // is cosmetic and should never be able to poison the final screen render target.
         DisableLegacyScreenFlash();
     }
 
-    private static void QueueLayerImpl(
-        QueueLayerOrig orig,
+    private static Hook HookQueueMethod(Type systemType, Type[] parameterTypes, Delegate detour)
+    {
+        MethodInfo method = systemType.GetMethod(
+            "QueueRenderAction",
+            BindingFlags.Public | BindingFlags.Instance,
+            binder: null,
+            types: parameterTypes,
+            modifiers: null);
+
+        return method == null ? null : new Hook(method, detour);
+    }
+
+    private static void PixelQueueLayerImpl(
+        PixelQueueLayerOrig orig,
         PixelationSystem self,
         RenderLayer renderType,
         Action renderAction,
         int order)
     {
-        if (!IsCalamiFxAction(renderAction))
-        {
-            orig(self, renderType, renderAction, order);
-            return;
-        }
-
-        if (ShouldDropAction(self, renderType))
+        if (!TryPrepareAction(self?.pixelationTargets, renderType, renderAction, "pixel", out Action safeAction))
             return;
 
-        orig(self, renderType, SafeRenderAction.Wrap(renderAction, renderType.ToString()), order);
+        orig(self, renderType, safeAction, order);
     }
 
-    private static void QueueStringImpl(
-        QueueStringOrig orig,
+    private static void PixelQueueStringImpl(
+        PixelQueueStringOrig orig,
         PixelationSystem self,
         string id,
         Action renderAction,
         int order)
     {
-        if (!IsCalamiFxAction(renderAction))
-        {
-            orig(self, id, renderAction, order);
+        RenderLayer layer = ResolveRenderLayer(id);
+        if (!TryPrepareAction(self?.pixelationTargets, layer, renderAction, "pixel", out Action safeAction))
             return;
+
+        orig(self, id, safeAction, order);
+    }
+
+    private static void AdditiveQueueLayerImpl(
+        AdditiveQueueLayerOrig orig,
+        AdditivePixelationSystem self,
+        RenderLayer renderType,
+        Action renderAction,
+        int order)
+    {
+        if (!TryPrepareAction(self?.pixelationTargets, renderType, renderAction, "additive", out Action safeAction))
+            return;
+
+        orig(self, renderType, safeAction, order);
+    }
+
+    private static void AdditiveQueueStringImpl(
+        AdditiveQueueStringOrig orig,
+        AdditivePixelationSystem self,
+        string id,
+        Action renderAction,
+        int order)
+    {
+        RenderLayer layer = ResolveRenderLayer(id);
+        if (!TryPrepareAction(self?.pixelationTargets, layer, renderAction, "additive", out Action safeAction))
+            return;
+
+        orig(self, id, safeAction, order);
+    }
+
+    private static bool TryPrepareAction(
+        List<PixelationTarget> targets,
+        RenderLayer layer,
+        Action renderAction,
+        string queueKind,
+        out Action safeAction)
+    {
+        safeAction = renderAction;
+
+        if (!IsCalamiFxAction(renderAction))
+            return true;
+
+        PixelationTarget target = targets?.Find(t => t.renderType == layer);
+        int queuedCount = target?.pixelationDrawActions?.Count ?? 0;
+        if (queuedCount >= MaxCalamiFxActionsPerLayer)
+        {
+            string budgetKey = $"{queueKind}:{layer}";
+            if (LoggedBudgetDrops.Add(budgetKey))
+            {
+                LogWarning($"Dropped excess CalamiFX+ {queueKind} draw actions on layer {layer}. " +
+                           $"The per-pass safety limit is {MaxCalamiFxActionsPerLayer} actions.");
+            }
+
+            return false;
         }
 
-        RenderLayer renderType = ResolveRenderLayer(id);
-        if (ShouldDropAction(self, renderType))
-            return;
-
-        orig(self, id, SafeRenderAction.Wrap(renderAction, id ?? renderType.ToString()), order);
+        safeAction = SafeRenderAction.Wrap(renderAction, $"{queueKind}:{layer}");
+        return true;
     }
 
     private static bool IsCalamiFxAction(Action action)
     {
         Assembly declaringAssembly = action?.Method?.DeclaringType?.Assembly;
         return declaringAssembly == typeof(RenderSafetySystem).Assembly;
-    }
-
-    private static bool ShouldDropAction(PixelationSystem system, RenderLayer layer)
-    {
-        if (system?.pixelationTargets == null)
-            return false;
-
-        PixelationTarget target = system.pixelationTargets.Find(t => t.renderType == layer);
-        int queuedCount = target?.pixelationDrawActions?.Count ?? 0;
-
-        if (queuedCount < MaxCalamiFxActionsPerLayer)
-            return false;
-
-        if (LoggedBudgetDrops.Add(layer))
-        {
-            LogWarning($"Dropped excess CalamiFX+ pixelation draw actions on layer {layer}. " +
-                       $"The per-pass safety limit is {MaxCalamiFxActionsPerLayer} actions.");
-        }
-
-        return true;
     }
 
     private static RenderLayer ResolveRenderLayer(string id)
@@ -290,8 +335,8 @@ public sealed class RenderSafetySystem : ModSystem
             }
             catch
             {
-                // Validation is an additional guard. Failure to inspect a compiler-generated
-                // closure should not stop the actual draw action from being queued.
+                // Closure inspection is only an extra guard. Failure to inspect it must not
+                // prevent the actual render action from being queued.
             }
 
             return result?.ToArray() ?? Array.Empty<ProjectileStamp>();
@@ -337,11 +382,13 @@ public sealed class RenderSafetySystem : ModSystem
         }
         catch
         {
-            // Best-effort recovery; Begin below is the important part.
+            // Best-effort recovery. Re-entering the batch below is the important part.
         }
 
         try
         {
+            // This matches the state PixelationTarget.DrawPixelTarget establishes before
+            // invoking queued actions.
             spriteBatch.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
